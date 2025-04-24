@@ -8,9 +8,22 @@
 import SwiftUI
 import SwiftData
 
-struct ContentView: View {
- 
+struct CalendarView: View {
+    @State private var date = Date()
     var body: some View {
-           Text("Hello, world!")
+        VStack{
+            DatePicker(
+                "Start Date",
+                selection: $date,
+                displayedComponents: [.date]
+            )
+            .datePickerStyle(.graphical)
+        }.padding()
+        
+        Spacer()
     }
+}
+
+#Preview {
+    CalendarView()
 }

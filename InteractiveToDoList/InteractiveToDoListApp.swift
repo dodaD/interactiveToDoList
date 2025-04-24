@@ -12,7 +12,7 @@ import SwiftData
 struct InteractiveToDoListApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CalendarView()
         }
     }
 }

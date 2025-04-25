@@ -10,6 +10,7 @@ import SwiftData
 
 struct CalendarView: View {
     @State private var date = Date()
+
     var body: some View {
         VStack{
             DatePicker(
@@ -19,11 +20,14 @@ struct CalendarView: View {
             )
             .datePickerStyle(.graphical)
         }.padding()
-        
         Spacer()
         
+        
+        let selectedDate = date.formatted(date: .long, time: .omitted)
         List(tasks) { task in
-            TaskRow(task: task)
+            if(selectedDate == task.date) {
+                TaskRow(task: task)
+            }
         }
     }
 }

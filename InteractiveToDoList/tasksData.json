@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "task": "Buy groceries",
+        "state": false,
+        "description": "Milk, eggs, bread, and vegetables",
+        "date": "April 25"
+    },
+    {
+        "id": 2,
+        "task": "Finish project report",
+        "state": true,
+        "description": "Complete the final draft and send to the manager",
+        "date": "April 24"
+    },
+    {
+        "id": 3,
+        "task": "Book dentist appointment",
+        "state": false,
+        "description": "Call Dr. Smith’s office to schedule a cleaning",
+        "date": "April 26"
+    },
+    {
+        "id": 4,
+        "task": "Workout",
+        "state": true,
+        "description": "30-minute cardio and strength training",
+        "date": "April 25"
+    },
+    {
+        "id": 5,
+        "task": "Read a book",
+        "state": false,
+        "description": "Read at least one chapter of 'Atomic Habits'",
+        "date": "April 23"
+    }
+]
+

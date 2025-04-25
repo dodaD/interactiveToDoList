@@ -21,6 +21,10 @@ struct CalendarView: View {
         }.padding()
         
         Spacer()
+        
+        List(tasks) { task in
+            TaskRow(task: task)
+        }
     }
 }
 

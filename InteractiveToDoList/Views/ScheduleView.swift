@@ -33,14 +33,19 @@ struct ScheduleView: View {
                 Text(task.task)
             }
             
-            /*if task.id == selectedTaskID {
-                task.date = selectedDate
-            }*/
+
         }
+        .onChange(of: selectedTaskID) { newID in
+            if let id = newID,
+               let index = modelData.tasks.firstIndex(where: { $0.id == id }) {
+                modelData.tasks[index].task = "New 2 name"
+            }
+        }
+
     }
 }
 
 #Preview {
-    ScheduleView()
+    ScheduleView().environment(ModelData())
 }
 

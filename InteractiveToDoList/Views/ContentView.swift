@@ -11,7 +11,6 @@ import SwiftData
 struct CalendarView: View {
     @Environment(ModelData.self) var modelData
     @State private var date = Date()
-    @State var touching = false
 
     var body: some View {
         VStack{
@@ -39,5 +38,5 @@ struct CalendarView: View {
 }
 
 #Preview {
-    CalendarView()
+    CalendarView().environment(ModelData())
 }

@@ -10,10 +10,12 @@ import SwiftData
 
 @main
 struct InteractiveToDoListApp: App {
+    @State private var modelData = ModelData()
+    
     var body: some Scene {
         WindowGroup {
             //CalendarView()
-            ScheduleView()
+            ScheduleView().environment(modelData)
         }
     }
 }

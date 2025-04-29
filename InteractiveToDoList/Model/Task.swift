@@ -22,4 +22,8 @@ struct Task: Hashable, Codable, Identifiable, Transferable{
     }
 }
 
-
+extension UTType {
+    static var task: UTType {
+        UTType(exportedAs: "interactive-to-do-list.task")
+    }
+}

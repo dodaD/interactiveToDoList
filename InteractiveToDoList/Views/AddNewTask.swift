@@ -47,13 +47,18 @@ struct AddNewTaskView: View {
             // button to add a user
             Button(action: {
                 // call function to add row in sqlite database
-                //DB_Manager().addUser(nameValue: self.name, emailValue: self.email, ageValue: Int64(self.age) ?? 0)
-                print("Hi")
+                do {
+                    let dbManager = try DatabaseManager()
+                    dbManager.addTask(taskValue: self.task, descriptionValue: self.description, dateValue: self.date)
+                } catch {
+                    print("Failed to create DatabaseManager:", error)
+                }
+                
                 
                 // go back to home page
                 self.mode.wrappedValue.dismiss()
             }, label: {
-                Text("Add User")
+                Text("Add task")
             })
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.top, 10)

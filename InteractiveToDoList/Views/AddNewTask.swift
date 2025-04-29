@@ -70,6 +70,8 @@ struct AddNewTaskView: View {
                 do {
                     let dbManager = try DatabaseManager()
                     dbManager.addTask(taskValue: self.task, descriptionValue: self.description, dateValue: self.date)
+                    
+                    self.tasksModel = DatabaseManager().getTasks()
                 } catch {
                     print("Failed to create DatabaseManager:", error)
                 }

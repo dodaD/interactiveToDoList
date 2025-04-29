@@ -10,7 +10,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 
-struct Task: Hashable, Codable, Identifiable, Transferable{
+/*struct Task: Hashable, Codable, Identifiable, Transferable{
     var id: Int
     var task: String
     var state: Bool
@@ -26,4 +26,12 @@ extension UTType {
     static var task: UTType {
         UTType(exportedAs: "interactive-to-do-list.task")
     }
+}*/
+
+class Task: Identifiable, Decodable {
+    public var id: Int = 0
+    public var task: String = ""
+    public var state: Bool = false
+    public var description: String = ""
+    public var date: String = ""
 }

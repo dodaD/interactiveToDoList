@@ -10,7 +10,7 @@ import Foundation
 
 class DatabaseManager {
     private var db: Connection!
-    private let tasks: Table
+    private var tasks: Table
     private let id: SQLite.Expression<Int>
     private let task: SQLite.Expression<String>
     private let state: SQLite.Expression<Bool>
@@ -63,6 +63,38 @@ class DatabaseManager {
             print("Hello from the other sideeeee")
         }
     }
-    
+   
+    public func getTasks() -> [Task] {
+        
+        // create empty array
+        var tasksModel: [Task] = []
+        
+        // get all users in descending order
+        tasks = tasks.order(id.desc)
+        
+        // exception handling
+        do {
+            // loop through all users
+            for row in try db.prepare(tasks) {
+                
+                // create new model in each loop iteration
+                let taskModel: Task = Task()
+                
+                // set values in model from database
+                taskModel.id = row[id]
+                taskModel.task = row[task]
+                taskModel.description = row[description]
+                taskModel.date = row[date]!
+                
+                // append in new array
+                tasksModel.append(taskModel)
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        // return array
+        return tasksModel
+    }
 }
     

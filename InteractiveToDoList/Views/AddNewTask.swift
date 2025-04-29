@@ -14,10 +14,30 @@ struct AddNewTaskView: View {
     @State var description: String = ""
     @State var date: String = ""
     
+    // array of user models
+    @State var tasksModel: [Task] = []
+    
     // to go back on the home screen when the user is added
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     
     var body: some View {
+        
+        VStack {
+            List (self.tasksModel) { (model) in
+                // show name, email and age horizontally
+                VStack {
+                    Text(model.task)
+                    Spacer()
+                    Text(model.description)
+                    Spacer()
+                    Text("\(model.date)")
+                    Spacer()
+                    // edit and delete button goes here
+                }
+            }
+        }.onAppear(perform: {
+            self.tasksModel = DatabaseManager().getTasks()
+        })
         
         VStack {
             // create name field

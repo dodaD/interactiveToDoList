@@ -96,5 +96,17 @@ class DatabaseManager {
         // return array
         return tasksModel
     }
+    
+    public func deleteTask(idValue: Int) {
+        do {
+            // get user using ID
+            let task: Table = tasks.filter(id == idValue)
+            
+            // run the delete query
+            try db.run(task.delete())
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }
     

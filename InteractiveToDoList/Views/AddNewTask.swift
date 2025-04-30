@@ -17,9 +17,6 @@ struct AddNewTaskView: View {
     // array of user models
     @State var tasksModel: [Task] = []
     
-    // to go back on the home screen when the user is added
-    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
-    
     var body: some View {
         
         VStack {
@@ -27,14 +24,21 @@ struct AddNewTaskView: View {
                 // show name, email and age horizontally
                 VStack {
                     Text(model.task)
-                    Spacer()
                     Text(model.description)
-                    Spacer()
-                    Text("\(model.date)")
-                    Spacer()
+                    Text(model.date)
+                    
+                    Button(action: {
+                        let dbManager: DatabaseManager = DatabaseManager()
+                        dbManager.deleteTask(idValue: model.id)
+                        
+                        self.tasksModel = DatabaseManager().getTasks()
+                    }, label: {
+                        Text("Delete")
+                            .foregroundColor(Color.red)
+                    })
                     // edit and delete button goes here
                 }
-            }
+            }.padding(10)
         }.onAppear(perform: {
             self.tasksModel = DatabaseManager().getTasks()
         })
@@ -78,7 +82,6 @@ struct AddNewTaskView: View {
                 
                 
                 // go back to home page
-                self.mode.wrappedValue.dismiss()
             }, label: {
                 Text("Add task")
             })
@@ -86,7 +89,9 @@ struct AddNewTaskView: View {
             .padding(.top, 10)
             .padding(.bottom, 10)
         }.padding()
+       
         
+
     }
 }
 

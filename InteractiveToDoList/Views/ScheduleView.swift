@@ -10,7 +10,7 @@ import SwiftUI
 import SwiftData
 
 struct ScheduleView: View {
-    @Environment(ModelData.self) var modelData
+    @State var tasksModel: [Task] = []
     @State private var date = Date()
     @State private var selectedTaskID: Int? = nil
     
@@ -27,25 +27,35 @@ struct ScheduleView: View {
         Spacer()
         
         
-        let selectedDate = date.formatted(date: .long, time: .omitted)
-        List(modelData.tasks, selection: $selectedTaskID) { task in
-            VStack {
-                Text(task.task)
-            }
-            
-
-        }
-        .onChange(of: selectedTaskID) { newID in
-            if let id = newID,
-               let index = modelData.tasks.firstIndex(where: { $0.id == id }) {
-                modelData.tasks[index].task = "New 2 name"
-            }
-        }
+        //let selectedDate = date.formatted(date: .long, time: .omitted)
+        
+        VStack {
+            List (self.tasksModel) { (model) in
+                // show name, email and age horizontally
+                VStack {
+                    Text(model.task)
+                    Text(model.description)
+                    Text(model.date)
+                    
+                    Button(action: {
+                        let dbManager: DatabaseManager = DatabaseManager()
+                        dbManager.deleteTask(idValue: model.id)
+                        
+                        self.tasksModel = DatabaseManager().getTasks()
+                    }, label: {
+                        Text("Delete")
+                            .foregroundColor(Color.red)
+                    })
+                }
+            }.padding(10)
+        }.onAppear(perform: {
+            self.tasksModel = DatabaseManager().getTasks()
+        })
 
     }
 }
 
 #Preview {
-    ScheduleView().environment(ModelData())
+    ScheduleView()
 }
 

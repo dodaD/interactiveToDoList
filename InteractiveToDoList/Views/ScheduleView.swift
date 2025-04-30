@@ -13,6 +13,18 @@ struct ScheduleView: View {
     @State var tasksModel: [Task] = []
     @State private var date = Date()
     @State private var selectedTaskID: Int? = nil
+    @State private var doesShowInputFields = false
+    @State private var newTask = ""
+    
+    @State private var doesClose = false
+    
+    func addItem() {
+        if(doesShowInputFields) {
+            return
+        }
+        
+        doesShowInputFields = true
+    }
     
     var body: some View {
         VStack{
@@ -24,36 +36,38 @@ struct ScheduleView: View {
             .labelsHidden()
             .datePickerStyle(.graphical)
         }.padding()
-        Spacer()
         
         
         //let selectedDate = date.formatted(date: .long, time: .omitted)
         
         VStack {
-            List (self.tasksModel) { (model) in
-                // show name, email and age horizontally
-                VStack {
-                    Text(model.task)
-                    Text(model.description)
-                    Text(model.date)
-                    
-                    Button(action: {
-                        let dbManager: DatabaseManager = DatabaseManager()
-                        dbManager.deleteTask(idValue: model.id)
-                        
-                        self.tasksModel = DatabaseManager().getTasks()
-                    }, label: {
-                        Text("Delete")
-                            .foregroundColor(Color.red)
-                    })
+            List {
+                ForEach(tasksModel) { model in
+                    HStack {
+                        Toggle("", isOn: $doesClose)
+                            .toggleStyle(CheckboxToggleStyle())
+                        VStack(alignment: .leading) {
+                            Text(model.task)
+                            Text(model.description).foregroundColor(.gray)
+                        }
+                    }
                 }
-            }.padding(10)
+                
+                if doesShowInputFields {
+                    InputField(task: $newTask)
+                }
+            }
+            
+            Button(action: addItem) {
+                Label("Add Task", systemImage: "plus.circle")
+            }
         }.onAppear(perform: {
             self.tasksModel = DatabaseManager().getTasks()
         })
-
     }
+    
 }
+
 
 #Preview {
     ScheduleView()

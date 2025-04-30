@@ -15,15 +15,33 @@ struct ScheduleView: View {
     @State private var selectedTaskID: Int? = nil
     @State private var doesShowInputFields = false
     @State private var newTask = ""
-    
+    @State private var newTaskDescription = ""
+    @State private var newTaskDate = ""
+
     @State private var doesClose = false
     
-    func addItem() {
+    func openInputs() {
         if(doesShowInputFields) {
             return
         }
         
         doesShowInputFields = true
+    }
+    
+    func addItem(){
+        do {
+            let dbManager = try DatabaseManager()
+            dbManager.addTask(taskValue: self.newTask, descriptionValue: self.newTaskDescription, dateValue: self.newTaskDate)
+            
+            self.tasksModel = DatabaseManager().getTasks()
+        } catch {
+            print("Failed to connect DatabaseManager:", error)
+        }
+        
+        newTask = ""
+        newTaskDescription = ""
+        newTaskDate = ""
+        doesShowInputFields = false
     }
     
     var body: some View {
@@ -50,17 +68,37 @@ struct ScheduleView: View {
                             Text(model.task)
                             Text(model.description).foregroundColor(.gray)
                         }
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            let dbManager: DatabaseManager = DatabaseManager()
+                            dbManager.deleteTask(idValue: model.id)
+                            
+                            self.tasksModel = DatabaseManager().getTasks()
+                        }, label: {
+                            Text("Delete")
+                                .foregroundColor(Color.red)
+                        })
                     }
                 }
                 
                 if doesShowInputFields {
-                    InputField(task: $newTask)
+                    InputField(task: $newTask, description: $newTaskDescription, date: $newTaskDate)
+                    
+                    Button(action: addItem) {
+                        Label("Save", systemImage: "")
+                    }
+                }
+            }
+           
+            
+            if !doesShowInputFields {
+                Button(action: openInputs) {
+                    Label("Add Task", systemImage: "plus.circle")
                 }
             }
             
-            Button(action: addItem) {
-                Label("Add Task", systemImage: "plus.circle")
-            }
         }.onAppear(perform: {
             self.tasksModel = DatabaseManager().getTasks()
         })

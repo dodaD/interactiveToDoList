@@ -14,7 +14,10 @@ struct TaskComponent: View {
     
     func completeTask() {
         doesClose = true
-        print(model.task)
+        let dbManager: DatabaseManager = DatabaseManager()
+        dbManager.updateTaskStatus(newStatus: doesClose, idValue: model.id)
+        onDelete()
+        //Being called two times? possible bug
     }
     
     var body: some View {

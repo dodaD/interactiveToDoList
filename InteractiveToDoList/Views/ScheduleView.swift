@@ -75,7 +75,9 @@ struct ScheduleView: View {
 
                 ForEach(tasksModel) { task in
                     TaskComponent(model: task, onDelete: {
+                        print(task.state)
                         self.tasksModel = DatabaseManager().getTasks()
+                        print(task.state)
                     })
                 }
             }

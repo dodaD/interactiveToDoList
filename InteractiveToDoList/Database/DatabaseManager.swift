@@ -85,6 +85,7 @@ class DatabaseManager {
                 taskModel.task = row[task]
                 taskModel.description = row[description]
                 taskModel.date = row[date]!
+                taskModel.state = row[state]
                 
                 // append in new array
                 tasksModel.append(taskModel)
@@ -108,5 +109,31 @@ class DatabaseManager {
             print(error.localizedDescription)
         }
     }
+    
+    /*public func updateUser(idValue: Int64, nameValue: String, emailValue: String, ageValue: Int64) {
+     do {
+     // get user using ID
+     let user: Table = users.filter(id == idValue)
+     
+     // run the update query
+     try db.run(user.update(name <- nameValue, email <- emailValue, age <- ageValue))
+     } catch {
+     print(error.localizedDescription)
+     }
+     }
+ */
+    
+    public func updateTaskStatus(newStatus: Bool, idValue: Int) {
+        do {
+            // get user using ID
+            let task: Table = tasks.filter(id == idValue)
+            
+            // run the update query
+            try db.run(task.update(state <- newStatus))
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
 }
     

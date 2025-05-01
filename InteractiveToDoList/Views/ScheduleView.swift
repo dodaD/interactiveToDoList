@@ -29,6 +29,11 @@ struct ScheduleView: View {
     }
     
     func addItem(){
+        if(newTask == "") {
+            doesShowInputFields = false
+            return
+        }
+        
         do {
             let dbManager = try DatabaseManager()
             dbManager.addTask(taskValue: self.newTask, descriptionValue: self.newTaskDescription, dateValue: self.newTaskDate)
@@ -60,35 +65,18 @@ struct ScheduleView: View {
         
         VStack {
             List {
-                ForEach(tasksModel) { model in
-                    HStack {
-                        Toggle("", isOn: $doesClose)
-                            .toggleStyle(CheckboxToggleStyle())
-                        VStack(alignment: .leading) {
-                            Text(model.task)
-                            Text(model.description).foregroundColor(.gray)
-                        }
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            let dbManager: DatabaseManager = DatabaseManager()
-                            dbManager.deleteTask(idValue: model.id)
-                            
-                            self.tasksModel = DatabaseManager().getTasks()
-                        }, label: {
-                            Text("Delete")
-                                .foregroundColor(Color.red)
-                        })
-                    }
-                }
-                
                 if doesShowInputFields {
                     InputField(task: $newTask, description: $newTaskDescription, date: $newTaskDate)
                     
                     Button(action: addItem) {
                         Label("Save", systemImage: "")
                     }
+                }
+
+                ForEach(tasksModel) { task in
+                    TaskComponent(model: task, onDelete: {
+                        self.tasksModel = DatabaseManager().getTasks()
+                    })
                 }
             }
            

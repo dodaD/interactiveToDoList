@@ -53,7 +53,7 @@ struct TaskComponent: View {
             }
             .swipeActions(edge: .leading) {
                 Button(action: {
-                    completeTask()
+                    doesClose = !doesClose
                 },
                 label: {
                     Text("Complete")

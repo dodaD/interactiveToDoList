@@ -17,7 +17,7 @@ struct ScheduleView: View {
     @State private var newTask = ""
     @State private var newTaskDescription = ""
     @State private var newTaskDate = ""
-
+    
     @State private var doesClose = false
     
     func openInputs() {
@@ -58,13 +58,15 @@ struct ScheduleView: View {
             )
             .labelsHidden()
             .datePickerStyle(.graphical)
-        }.padding()
+        }.onAppear(perform: {
+            self.tasksModel = DatabaseManager().getTasks()
+        })
+        .padding()
         
         
-        //let selectedDate = date.formatted(date: .long, time: .omitted)
         
-        VStack {
-            List {
+        List {
+            Section {
                 if doesShowInputFields {
                     InputField(task: $newTask, description: $newTaskDescription, date: $newTaskDate)
                     
@@ -72,26 +74,47 @@ struct ScheduleView: View {
                         Label("Save", systemImage: "")
                     }
                 }
-
                 ForEach(tasksModel) { task in
-                    TaskComponent(model: task, onDelete: {
-                        print(task.state)
-                        self.tasksModel = DatabaseManager().getTasks()
-                        print(task.state)
-                    })
+                    if(!task.state){
+                        TaskComponent(model: task, onDelete: {
+                            self.tasksModel = DatabaseManager().getTasks()
+                        })
+                    }
                 }
+                .listRowSeparator(.hidden)
+            } header: {
+                Text("Tasks to be completed:")
             }
-           
-            
-            if !doesShowInputFields {
-                Button(action: openInputs) {
-                    Label("Add Task", systemImage: "plus.circle")
+            .listSectionSeparator(.hidden)
+            //TO-DO: create a component for completed list and not
+        }
+        
+        List {
+            Section {
+                ForEach(tasksModel) { task in
+                    if(task.state) {
+                        TaskComponent(model: task, onDelete: {
+                            self.tasksModel = DatabaseManager().getTasks()
+                        })
+                    }
                 }
+                .listRowSeparator(.hidden)
+                .strikethrough()
+            } header: {
+                Text("Done tasks:")
             }
-            
-        }.onAppear(perform: {
-            self.tasksModel = DatabaseManager().getTasks()
-        })
+            .listSectionSeparator(.hidden)
+            .foregroundStyle(Color.gray)
+            //TO-DO: create a component for completed list and not
+        }
+        
+        
+        if !doesShowInputFields {
+            Button(action: openInputs) {
+                Label("Add Task", systemImage: "plus.circle")
+            }
+        }
+        
     }
     
 }

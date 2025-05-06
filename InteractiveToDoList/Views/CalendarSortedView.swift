@@ -32,6 +32,44 @@ struct CalendarView: View {
                 TaskRow(task: task)
             }
         }
+        
+        /*List {
+         Section(header: Text("Tasks to be completed:")) {
+         if doesShowInputFields {
+         InputField(task: $newTask, description: $newTaskDescription, date: $newTaskDate)
+         
+         Button(action: addItem) {
+         Label("Save", systemImage: "")
+         }
+         }
+         ForEach(tasksModel) { task in
+         if(!task.state){
+         TaskComponent(model: task, onDelete: {
+         self.tasksModel = DatabaseManager().getTasks()
+         })
+         }
+         }
+         .listRowSeparator(.hidden)
+         }
+         .listSectionSeparator(.hidden)
+         
+         Section(header: Text("Done tasks:")) {
+         ForEach(tasksModel) { task in
+         if(task.state) {
+         TaskComponent(model: task, onDelete: {
+         self.tasksModel = DatabaseManager().getTasks()
+         })
+         }
+         }
+         .listRowSeparator(.hidden)
+         .strikethrough()
+         .foregroundStyle(Color.gray)
+         }
+         //TO-DO: create a component for completed list and not
+         }
+         
+        }*/
+
     }
 
     

@@ -17,6 +17,7 @@ struct ScheduleView: View {
     @State private var newTask = ""
     @State private var newTaskDescription = ""
     @State private var newTaskDate = ""
+    @State private var hasDateChanged = false
     
     @State private var doesClose = false
     
@@ -38,7 +39,7 @@ struct ScheduleView: View {
             let dbManager = try DatabaseManager()
             dbManager.addTask(taskValue: self.newTask, descriptionValue: self.newTaskDescription, dateValue: self.newTaskDate)
             
-            self.tasksModel = DatabaseManager().getTasks()
+            self.tasksModel = DatabaseManager().getTasksWithNoDate()
         } catch {
             print("Failed to connect DatabaseManager:", error)
         }
@@ -51,6 +52,12 @@ struct ScheduleView: View {
     
     var body: some View {
         VStack{
+            if hasDateChanged {
+                Text("Please hold the task you want to assign to this date")
+                    .padding(.horizontal, 20)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             DatePicker(
                 "Start Date",
                 selection: $date,
@@ -58,15 +65,18 @@ struct ScheduleView: View {
             )
             .labelsHidden()
             .datePickerStyle(.graphical)
-        }.onAppear(perform: {
-            self.tasksModel = DatabaseManager().getTasks()
+        }.onChange(of: date) {
+            hasDateChanged = true
+        }
+        .onAppear(perform: {
+            self.tasksModel = DatabaseManager().getTasksWithNoDate()
         })
         .padding()
         
         
         
         List {
-            Section {
+            Section(header: Text("Tasks to be completed:")) {
                 if doesShowInputFields {
                     InputField(task: $newTask, description: $newTaskDescription, date: $newTaskDate)
                     
@@ -76,36 +86,15 @@ struct ScheduleView: View {
                 }
                 ForEach(tasksModel) { task in
                     if(!task.state){
-                        TaskComponent(model: task, onDelete: {
-                            self.tasksModel = DatabaseManager().getTasks()
-                        })
+                        TaskComponent(model: task, onGetTasks: {
+                            self.tasksModel = DatabaseManager().getTasksWithNoDate()
+                        }).onLongPressGesture {
+                            print("!!!")
+                        }
                     }
                 }
                 .listRowSeparator(.hidden)
-            } header: {
-                Text("Tasks to be completed:")
             }
-            .listSectionSeparator(.hidden)
-            //TO-DO: create a component for completed list and not
-        }
-        
-        List {
-            Section {
-                ForEach(tasksModel) { task in
-                    if(task.state) {
-                        TaskComponent(model: task, onDelete: {
-                            self.tasksModel = DatabaseManager().getTasks()
-                        })
-                    }
-                }
-                .listRowSeparator(.hidden)
-                .strikethrough()
-            } header: {
-                Text("Done tasks:")
-            }
-            .listSectionSeparator(.hidden)
-            .foregroundStyle(Color.gray)
-            //TO-DO: create a component for completed list and not
         }
         
         

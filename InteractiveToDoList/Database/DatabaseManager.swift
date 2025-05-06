@@ -64,7 +64,7 @@ class DatabaseManager {
         }
     }
    
-    public func getTasks() -> [Task] {
+    public func getScheduledTasks() -> [Task] {
         
         // create empty array
         var tasksModel: [Task] = []
@@ -76,6 +76,46 @@ class DatabaseManager {
         do {
             // loop through all users
             for row in try db.prepare(tasks) {
+                if(row[date] == "") {
+                    continue
+                }
+                
+                // create new model in each loop iteration
+                let taskModel: Task = Task()
+                
+                // set values in model from database
+                taskModel.id = row[id]
+                taskModel.task = row[task]
+                taskModel.description = row[description]
+                taskModel.date = row[date]!
+                taskModel.state = row[state]
+                
+                // append in new array
+                tasksModel.append(taskModel)
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        // return array
+        return tasksModel
+    }
+
+    public func getTasksWithNoDate() -> [Task] {
+        
+        // create empty array
+        var tasksModel: [Task] = []
+        
+        // get all users in descending order
+        tasks = tasks.order(id.desc)
+        
+        // exception handling
+        do {
+            // loop through all users
+            for row in try db.prepare(tasks) {
+                if(row[date] != "") {
+                    continue
+                }
                 
                 // create new model in each loop iteration
                 let taskModel: Task = Task()
@@ -134,6 +174,8 @@ class DatabaseManager {
             print(error.localizedDescription)
         }
     }
+    
+    
 
 }
     

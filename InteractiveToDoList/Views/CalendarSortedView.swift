@@ -9,9 +9,14 @@ import SwiftUI
 import SwiftData
 
 struct CalendarView: View {
-    @Environment(ModelData.self) var modelData
     @State private var date = Date()
+    @State var tasksModel: [Task] = []
 
+    func getTasksWithTheDate () {
+        let selectedDate = date.formatted(date: .long, time: .omitted)
+        self.tasksModel = DatabaseManager().getScheduledTasksForDate(dateToFind: selectedDate)
+    }
+ 
     var body: some View {
         VStack{
             DatePicker(
@@ -21,60 +26,36 @@ struct CalendarView: View {
             )
             .labelsHidden()
             .datePickerStyle(.graphical)
+        }.onChange(of: date) {
+            getTasksWithTheDate()
         }
+        .onAppear(perform: {
+            getTasksWithTheDate()
+        })
         Spacer()
         
         
-        let selectedDate = date.formatted(date: .long, time: .omitted)
             
-        List(modelData.tasks) { task in
-            if(selectedDate == task.date) {
-                TaskRow(task: task)
+        
+        List {
+            Section(header: Text("Tasks to be completed:")) {
+                ForEach(tasksModel) { task in
+                    if(!task.state){
+                        TaskComponent(model: task, onGetTasks: {
+                            self.tasksModel = DatabaseManager().getTasksWithNoDate()
+                        })
+                    }
+                }
+                .listRowSeparator(.hidden)
             }
         }
         
-        /*List {
-         Section(header: Text("Tasks to be completed:")) {
-         if doesShowInputFields {
-         InputField(task: $newTask, description: $newTaskDescription, date: $newTaskDate)
-         
-         Button(action: addItem) {
-         Label("Save", systemImage: "")
-         }
-         }
-         ForEach(tasksModel) { task in
-         if(!task.state){
-         TaskComponent(model: task, onDelete: {
-         self.tasksModel = DatabaseManager().getTasks()
-         })
-         }
-         }
-         .listRowSeparator(.hidden)
-         }
-         .listSectionSeparator(.hidden)
-         
-         Section(header: Text("Done tasks:")) {
-         ForEach(tasksModel) { task in
-         if(task.state) {
-         TaskComponent(model: task, onDelete: {
-         self.tasksModel = DatabaseManager().getTasks()
-         })
-         }
-         }
-         .listRowSeparator(.hidden)
-         .strikethrough()
-         .foregroundStyle(Color.gray)
-         }
-         //TO-DO: create a component for completed list and not
-         }
-         
-        }*/
-
     }
-
     
 }
 
+    
+
 #Preview {
-    CalendarView().environment(ModelData())
+    CalendarView()
 }

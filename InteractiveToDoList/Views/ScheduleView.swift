@@ -21,7 +21,7 @@ struct ScheduleView: View {
     
     @State private var doesClose = false
     
-    func openInputs() {
+    func openInputs () {
         if(doesShowInputFields) {
             return
         }
@@ -29,7 +29,7 @@ struct ScheduleView: View {
         doesShowInputFields = true
     }
     
-    func addItem(){
+    func addItem (){
         if(newTask == "") {
             doesShowInputFields = false
             return
@@ -48,6 +48,16 @@ struct ScheduleView: View {
         newTaskDescription = ""
         newTaskDate = ""
         doesShowInputFields = false
+    }
+    
+    func assignDate (taskId: Int) {
+        let selectedDate = date.formatted(date: .long, time: .omitted)
+        let dbManager: DatabaseManager = DatabaseManager()
+
+        dbManager.updateTaskDate(newDate: selectedDate, idValue: taskId)
+        
+        tasksModel = tasksModel.filter{$0.id != taskId}
+        
     }
     
     var body: some View {
@@ -89,7 +99,7 @@ struct ScheduleView: View {
                         TaskComponent(model: task, onGetTasks: {
                             self.tasksModel = DatabaseManager().getTasksWithNoDate()
                         }).onLongPressGesture {
-                            print("!!!")
+                            assignDate(taskId: task.id)
                         }
                     }
                 }

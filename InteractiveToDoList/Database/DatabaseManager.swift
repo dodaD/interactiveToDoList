@@ -64,7 +64,7 @@ class DatabaseManager {
         }
     }
    
-    public func getScheduledTasks() -> [Task] {
+    public func getScheduledTasksForDate(dateToFind: String) -> [Task] {
         
         // create empty array
         var tasksModel: [Task] = []
@@ -76,7 +76,7 @@ class DatabaseManager {
         do {
             // loop through all users
             for row in try db.prepare(tasks) {
-                if(row[date] == "") {
+                if(row[date] != dateToFind) {
                     continue
                 }
                 
@@ -175,6 +175,17 @@ class DatabaseManager {
         }
     }
     
+    public func updateTaskDate(newDate: String, idValue: Int) {
+        do {
+            // get user using ID
+            let task: Table = tasks.filter(id == idValue)
+            
+            // run the update query
+            try db.run(task.update(date <- newDate))
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
     
 
 }

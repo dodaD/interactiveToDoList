@@ -96,7 +96,7 @@ struct ScheduleView: View {
                 }
                 ForEach(tasksModel) { task in
                     if(!task.state){
-                        TaskComponent(model: task, onGetTasks: {
+                        TaskComponent(model: task, onGetTasks: { id, state in
                             self.tasksModel = DatabaseManager().getTasksWithNoDate()
                         }).onLongPressGesture {
                             assignDate(taskId: task.id)

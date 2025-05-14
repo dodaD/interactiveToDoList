@@ -56,6 +56,22 @@ struct InputField: View {
                     Button(action: toggleDate) {
                         Label("Cancel", systemImage: "").font(.caption)
                     }
+                    
+                    /*DatePicker(
+                        "Start Date",
+                        selection: $notFormattedDate,
+                        displayedComponents: [.hourAndMinute]
+                    )
+                    .onChange(of: notFormattedDate) {
+                        date = $0.formatted(date: .long, time: .omitted)
+                    }
+                    .labelsHidden()
+                    
+                    Button(action: toggleDate) {
+                        Label("Cancel", systemImage: "").font(.caption)
+                    }*/
+                    // TODO - this code is for adding time - in future implement the time logic as well
+
                 }
             }
         }

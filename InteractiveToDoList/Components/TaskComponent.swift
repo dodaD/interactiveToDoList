@@ -11,9 +11,10 @@ struct TaskComponent: View {
     @State var model: Task
     @State private var doesClose = false
     @State private var previousDoesClose = false
-    var onGetTasks: () -> Void
+    var onGetTasks: (_ id: Int, _ state: Bool) -> Void
     
     func completeTask() {
+        print("HIII")
         if(previousDoesClose == doesClose) {
             return
         }
@@ -21,7 +22,7 @@ struct TaskComponent: View {
         dbManager.updateTaskStatus(newStatus: doesClose, idValue: model.id)
             
         previousDoesClose = doesClose
-        onGetTasks()
+        onGetTasks(model.id, doesClose)
         //Being called two times? possible bug
     }
     
@@ -45,7 +46,7 @@ struct TaskComponent: View {
                 Button(action: {
                     let dbManager: DatabaseManager = DatabaseManager()
                     dbManager.deleteTask(idValue: model.id)
-                    onGetTasks()
+                    onGetTasks(model.id, doesClose)
                 }, label: {
                     Text("Delete")
                         .foregroundColor(Color.red)

@@ -18,6 +18,7 @@ struct ScheduleView: View {
     @State private var newTaskDescription = ""
     @State private var newTaskDate = ""
     @State private var hasDateChanged = false
+    @State private var keyboardHeight: CGFloat = 0
     
     @State private var doesClose = false
     
@@ -60,62 +61,71 @@ struct ScheduleView: View {
         
     }
     
-    var body: some View {
-        VStack{
-            if hasDateChanged {
-                Text("Please hold the task you want to assign to this date")
-                    .padding(.horizontal, 20)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            DatePicker(
-                "Start Date",
-                selection: $date,
-                displayedComponents: [.date]
-            )
-            .labelsHidden()
-            .datePickerStyle(.graphical)
-        }.onChange(of: date) {
-            hasDateChanged = true
-        }
-        .onAppear(perform: {
-            self.tasksModel = DatabaseManager().getTasksWithNoDate()
-        })
-        .padding()
-        
-        
-        
-        List {
-            Section(header: Text("Tasks to be completed:")) {
-                if doesShowInputFields {
-                    InputField(task: $newTask, description: $newTaskDescription, date: $newTaskDate)
-                    
-                    Button(action: addItem) {
-                        Label("Save", systemImage: "")
-                    }
-                }
-                ForEach(tasksModel) { task in
-                    if(!task.state){
-                        TaskComponent(model: task, onGetTasks: { id, state in
-                            self.tasksModel = DatabaseManager().getTasksWithNoDate()
-                        }).onLongPressGesture {
-                            assignDate(taskId: task.id)
-                        }
-                    }
-                }
-                .listRowSeparator(.hidden)
+    func startObservingKeyboard() {
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notif in
+            if let frame = notif.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                keyboardHeight = frame.height - 10
             }
         }
         
-        
-        if !doesShowInputFields {
-            Button(action: openInputs) {
-                Label("Add Task", systemImage: "plus.circle")
-            }
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
+            keyboardHeight = 0
         }
-        
     }
     
+    var body: some View {
+        VStack {
+            ScrollView {
+                DatePicker(
+                    "Start Date",
+                    selection: $date,
+                    displayedComponents: [.date]
+                )
+                .labelsHidden()
+                .datePickerStyle(.graphical)
+            }.onChange(of: date) {
+                hasDateChanged = true
+            }
+            .onAppear(perform: {
+                self.tasksModel = DatabaseManager().getTasksWithNoDate()
+            })
+            .frame(maxHeight: doesShowInputFields ? 200 : .infinity)
+            .padding()
+            
+            
+            
+            List {
+                Section(header: Text("Tasks to be completed:")) {
+                    if doesShowInputFields {
+                        InputField(task: $newTask, description: $newTaskDescription, date: $newTaskDate)
+                        
+                        Button(action: addItem) {
+                            Label("Save", systemImage: "")
+                        }
+                    }
+                    ForEach(tasksModel) { task in
+                        if(!task.state){
+                            TaskComponent(model: task, onGetTasks: { id, state in
+                                self.tasksModel = DatabaseManager().getTasksWithNoDate()
+                            }).onLongPressGesture {
+                                assignDate(taskId: task.id)
+                            }
+                        }
+                    }
+                    .listRowSeparator(.hidden)
+                }
+            }
+            
+            
+            if !doesShowInputFields {
+                Button(action: openInputs) {
+                    Label("Add Task", systemImage: "plus.circle")
+                }
+            }
+            
+        }.padding(.bottom, keyboardHeight)
+            .animation(.easeOut(duration: 0.25), value: keyboardHeight)
+    }
 }
 
 

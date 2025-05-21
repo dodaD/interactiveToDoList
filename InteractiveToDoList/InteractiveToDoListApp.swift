@@ -14,8 +14,8 @@ struct InteractiveToDoListApp: App {
     
     var body: some Scene {
         WindowGroup {
-            //CalendarView()
-            ScheduleView()
+            CalendarView()
+           // ScheduleView()
             //AddNewTaskView().environment(modelData)
 
         }
